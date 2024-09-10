@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - DATABASE_URL=mysql://pung:pungPassword!23@db:3306/wantedlab
+    depends_on:
+      - db
+
+  db:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootPassword!23
+      - MYSQL_DATABASE=wantedlab
+      - MYSQL_USER=pung
+      - MYSQL_PASSWORD=pungPassword!23
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
