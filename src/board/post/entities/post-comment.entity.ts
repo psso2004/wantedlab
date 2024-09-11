@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
@@ -13,6 +14,15 @@ export class PostCommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  postId: number;
+
+  @Column()
+  commentId: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
   /**
    * =================== relations ===================
    */
@@ -26,7 +36,4 @@ export class PostCommentEntity {
   /**
    * =================================================
    */
-
-  @CreateDateColumn()
-  createdAt: Date;
 }
