@@ -4,6 +4,8 @@ import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppDataSource } from "./data-source";
+import { BoardModule } from "./board/board.module";
+import { KeywordModule } from "./keyword/keyword.module";
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { AppDataSource } from "./data-source";
       },
       inject: [ConfigService],
     }),
+    BoardModule,
+    KeywordModule,
   ],
   controllers: [AppController],
   providers: [AppService],
