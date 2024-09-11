@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppDataSource } from "./data-source";
 import { BoardModule } from "./board/board.module";
 import { KeywordModule } from "./keyword/keyword.module";
+import { JoiPipeModule } from "nestjs-joi";
 
 @Module({
   imports: [
@@ -19,6 +20,11 @@ import { KeywordModule } from "./keyword/keyword.module";
         return dataSource.options;
       },
       inject: [ConfigService],
+    }),
+    JoiPipeModule.forRoot({
+      pipeOpts: {
+        usePipeValidationException: true,
+      },
     }),
     BoardModule,
     KeywordModule,

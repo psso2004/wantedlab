@@ -13,11 +13,8 @@ export class PostCommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
   /**
-   * relations
+   * =================== relations ===================
    */
   @ManyToOne(() => PostEntity, (post) => post.postComments)
   @JoinColumn({ name: "post_id" })
@@ -26,4 +23,10 @@ export class PostCommentEntity {
   @ManyToOne(() => CommentEntity, (comment) => comment.postComments)
   @JoinColumn({ name: "comment_id" })
   comment: CommentEntity;
+  /**
+   * =================================================
+   */
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

@@ -39,8 +39,11 @@ export class PostEntity {
   deletedAt: Date;
 
   /**
-   * relations
+   * =================== relations ===================
    */
   @OneToMany(() => PostCommentEntity, (postComment) => postComment.post)
   postComments: PostCommentEntity[];
+  /**
+   * =================================================
+   */
 }
