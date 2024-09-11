@@ -3,6 +3,9 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -13,6 +16,13 @@ import { PostCommentEntity } from "../../post/entities/post-comment.entity";
 export class CommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Index()
+  @Column({ nullable: true })
+  rootCommentId: number | null;
+
+  @Column({ nullable: true })
+  parentCommentId: number | null;
 
   @Column({ type: "text" })
   content: string;
@@ -36,6 +46,15 @@ export class CommentEntity {
   /**
    * =================== relations ===================
    */
+  @ManyToOne(() => CommentEntity, (comment) => comment.children, {
+    nullable: true,
+  })
+  @JoinColumn({ name: "parent_comment_id" })
+  parentComment: CommentEntity | null;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.parentComment)
+  children: CommentEntity[];
+
   @OneToMany(() => PostCommentEntity, (postComment) => postComment.comment)
   postComments: PostCommentEntity[];
   /**
