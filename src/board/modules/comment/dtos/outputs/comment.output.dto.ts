@@ -9,7 +9,7 @@ export class CommentOutputDto {
   constructor(
     content: string,
     userName: string,
-    children: CommentEntity[],
+    children: CommentEntity[] = [],
     createdAt: Date
   ) {
     this.content = content;

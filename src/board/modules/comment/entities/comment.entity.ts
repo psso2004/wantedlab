@@ -55,7 +55,9 @@ export class CommentEntity {
   @OneToMany(() => CommentEntity, (comment) => comment.parentComment)
   children: CommentEntity[];
 
-  @OneToMany(() => PostCommentEntity, (postComment) => postComment.comment)
+  @OneToMany(() => PostCommentEntity, (postComment) => postComment.comment, {
+    cascade: ["insert"],
+  })
   postComments: PostCommentEntity[];
   /**
    * =================================================

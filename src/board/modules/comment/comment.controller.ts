@@ -23,9 +23,14 @@ export class CommentController {
   }
 
   @Post()
-  createComment(
+  async createComment(
     @Body() input: CreateCommentInputDto
   ): Promise<CommentOutputDto> {
-    return this.commentService.createComment(input);
+    const comment = await this.commentService.createComment(
+      Object.assign(input, {
+        postComments: [{ post: { id: input.boardId } }],
+      })
+    );
+    return CommentOutputDto.fromEntity(comment);
   }
 }
