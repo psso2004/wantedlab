@@ -8,6 +8,7 @@ import { KeywordModule } from "./keyword/keyword.module";
 import { JoiPipeModule } from "nestjs-joi";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { DataSource } from "typeorm";
+import { BullModule } from "@nestjs/bullmq";
 
 @Module({
   imports: [
@@ -38,6 +39,16 @@ import { DataSource } from "typeorm";
       pipeOpts: {
         usePipeValidationException: true,
       },
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          host: configService.get<string>("REDIS_HOST"),
+          port: configService.get<number>("REDIS_PORT"),
+        },
+      }),
     }),
     BoardModule,
     KeywordModule,
