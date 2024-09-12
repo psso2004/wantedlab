@@ -26,7 +26,7 @@ export class PostController {
   constructor(
     private readonly postService: PostService,
     @InjectQueue("keyword")
-    private keywordQueue: Queue
+    private readonly keywordQueue: Queue
   ) {}
 
   @Get()
@@ -56,9 +56,11 @@ export class PostController {
   @Post()
   async createPost(@Body() input: CreatePostInputDto): Promise<PostOutputDto> {
     const post = await this.postService.createPost(input);
-    this.keywordQueue.add("active", {
-      id: "test222",
+    await this.keywordQueue.add("keywordMatch", {
+      userName: post.userName,
+      content: `${post.title} ${post.content}`,
     });
+
     return PostOutputDto.fromEntity(post);
   }
 
