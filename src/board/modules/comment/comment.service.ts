@@ -17,14 +17,6 @@ export class CommentService {
     private readonly postService: PostService
   ) {}
 
-  getComment(
-    where: FindOptionsWhere<CommentEntity>,
-    entityManager?: EntityManager
-  ): Promise<CommentEntity | null> {
-    const em = entityManager ?? this.dataSource.createEntityManager();
-    return em.findOneBy(CommentEntity, where);
-  }
-
   getComments(
     options: FindManyOptions<CommentEntity> = {},
     entityManager?: EntityManager
@@ -79,7 +71,7 @@ export class CommentService {
       throw new NotFoundException("post not found");
     }
 
-    const comment = em.create(CommentEntity, Object.assign(createData, {}));
+    const comment = em.create(CommentEntity, createData);
 
     return em.save(CommentEntity, comment);
   }
