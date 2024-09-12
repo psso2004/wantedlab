@@ -6,10 +6,7 @@ import * as Joi from "joi";
 })
 export class CreateCommentInputDto {
   @JoiSchema(Joi.number().integer().positive().required())
-  boardId: number;
-
-  @JoiSchema(Joi.string().valid("post").default("post"))
-  boardType: "post";
+  boardPostId: number;
 
   @JoiSchema(Joi.number().integer().positive().allow(null).default(null))
   parentCommentId: number | null;

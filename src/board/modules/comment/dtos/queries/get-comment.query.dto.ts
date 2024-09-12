@@ -6,10 +6,7 @@ import * as Joi from "joi";
 })
 export class GetCommentQueryDto {
   @JoiSchema(Joi.number().integer().positive().required())
-  boardId: number;
-
-  @JoiSchema(Joi.string().valid("post").default("post"))
-  boardType: "post";
+  boardPostId: number;
 
   @JoiSchema(Joi.number().integer().positive().default(1))
   page?: number;

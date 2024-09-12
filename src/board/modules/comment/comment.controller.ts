@@ -19,11 +19,13 @@ export class CommentController {
 
     const where = {
       parentCommentId: IsNull(),
-      postComments: {
-        post: {
-          id: query.boardId,
+      ...(query.boardPostId && {
+        postComments: {
+          post: {
+            id: query.boardPostId,
+          },
         },
-      },
+      }),
     };
     const [comments, total] = await Promise.all([
       this.commentService.getComments({
@@ -51,7 +53,9 @@ export class CommentController {
   ): Promise<CommentOutputDto> {
     const comment = await this.commentService.createComment(
       Object.assign(input, {
-        postComments: [{ post: { id: input.boardId } }],
+        ...(input.boardPostId && {
+          postComments: [{ post: { id: input.boardPostId } }],
+        }),
       })
     );
     return CommentOutputDto.fromEntity(comment);
