@@ -6,10 +6,16 @@ import { CommentOutputDto } from "./dtos/outputs/comment.output.dto";
 import { CommentService } from "./comment.service";
 import { PaginatedOutput } from "../../dtos/outputs/paginated.output.dto";
 import { IsNull } from "typeorm";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @Controller("comment")
 export class CommentController {
-  constructor(private readonly commentService: CommentService) {}
+  constructor(
+    private readonly commentService: CommentService,
+    @InjectQueue("keyword")
+    private readonly keywordQueue: Queue
+  ) {}
 
   @Get()
   async getComments(
@@ -58,6 +64,11 @@ export class CommentController {
         }),
       })
     );
+    await this.keywordQueue.add("keywordMatch", {
+      userName: comment.userName,
+      content: comment.content,
+    });
+
     return CommentOutputDto.fromEntity(comment);
   }
 }
