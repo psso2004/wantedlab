@@ -13,14 +13,20 @@ import * as bcrypt from "bcrypt";
 export class PostService {
   constructor(private readonly dataSource: DataSource) {}
 
-  getPost(where: FindOptionsWhere<PostEntity>): Promise<PostEntity | null> {
-    const repo = this.dataSource.getRepository(PostEntity);
-    return repo.findOneBy(where);
+  getPost(
+    where: FindOptionsWhere<PostEntity>,
+    entityManager?: EntityManager
+  ): Promise<PostEntity | null> {
+    const em = entityManager ?? this.dataSource.createEntityManager();
+    return em.findOneBy(PostEntity, where);
   }
 
-  getPosts(options: FindManyOptions<PostEntity> = {}): Promise<PostEntity[]> {
-    const repo = this.dataSource.getRepository(PostEntity);
-    return repo.find(options);
+  getPosts(
+    options: FindManyOptions<PostEntity> = {},
+    entityManager?: EntityManager
+  ): Promise<PostEntity[]> {
+    const em = entityManager ?? this.dataSource.createEntityManager();
+    return em.find(PostEntity, options);
   }
 
   getTotalPostsCount(
@@ -54,7 +60,7 @@ export class PostService {
     const em = entityManager ?? this.dataSource.createEntityManager();
 
     const { id, password, ...filteredUpdateData } = updateData;
-    const post = await em.findOneBy(PostEntity, { id });
+    const post = await this.getPost({ id }, em);
     if (!post) {
       throw new NotFoundException("post not found");
     }
