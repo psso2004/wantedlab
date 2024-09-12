@@ -18,10 +18,16 @@ import { IPaginated } from "../../dtos/interfaces/paginated.interface";
 import { GetPostQueryDto } from "./dtos/queries/get-post.query.dto";
 import { PostService } from "./post.service";
 import { Like } from "typeorm";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @Controller("post")
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    @InjectQueue("keyword")
+    private keywordQueue: Queue
+  ) {}
 
   @Get()
   async getPosts(
@@ -50,6 +56,9 @@ export class PostController {
   @Post()
   async createPost(@Body() input: CreatePostInputDto): Promise<PostOutputDto> {
     const post = await this.postService.createPost(input);
+    this.keywordQueue.add("active", {
+      id: "test222",
+    });
     return PostOutputDto.fromEntity(post);
   }
 
