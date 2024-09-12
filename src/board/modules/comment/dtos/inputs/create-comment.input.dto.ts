@@ -8,7 +8,7 @@ export class CreateCommentInputDto {
   @JoiSchema(Joi.number().integer().positive().required())
   boardId: number;
 
-  @JoiSchema(Joi.string().valid(["post"]).default("post"))
+  @JoiSchema(Joi.string().valid("post").default("post"))
   boardType: "post";
 
   @JoiSchema(Joi.number().integer().positive().default(null))
