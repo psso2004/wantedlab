@@ -53,13 +53,13 @@ export class PostService {
   ): Promise<PostEntity> {
     const em = entityManager ?? this.dataSource.createEntityManager();
 
-    const { id } = updateData;
+    const { id, password, ...filteredUpdateData } = updateData;
     const post = await em.findOneBy(PostEntity, { id });
     if (!post) {
       throw new NotFoundException("post not found");
     }
 
-    em.merge(PostEntity, post, updateData);
+    em.merge(PostEntity, post, filteredUpdateData);
     return em.save(PostEntity, post);
   }
 
