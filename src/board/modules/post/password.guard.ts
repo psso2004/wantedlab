@@ -5,16 +5,11 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { PostEntity } from "./entities/post.entity";
-import { Repository } from "typeorm";
+import { PostService } from "./post.service";
 
 @Injectable()
 export class PasswordGuard implements CanActivate {
-  constructor(
-    @InjectRepository(PostEntity)
-    private readonly postRepository: Repository<PostEntity>
-  ) {}
+  constructor(private readonly postService: PostService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
@@ -25,13 +20,16 @@ export class PasswordGuard implements CanActivate {
       throw new BadRequestException("post id or password is required");
     }
 
-    const post = await this.postRepository.findOneBy({ id });
+    const post = await this.postService.getPost({ id });
     if (!post) {
       throw new BadRequestException("post not found");
     }
 
-    // todo: password hash
-    if (password !== post.password) {
+    const isMatch = await this.postService.comparePassword(
+      password,
+      post.password
+    );
+    if (!isMatch) {
       throw new UnauthorizedException("invalid password");
     }
 
