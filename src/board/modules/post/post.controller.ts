@@ -17,6 +17,7 @@ import { PaginatedOutput } from "../../dtos/outputs/paginated.output.dto";
 import { IPaginated } from "../../dtos/interfaces/paginated.interface";
 import { GetPostQueryDto } from "./dtos/queries/get-post.query.dto";
 import { PostService } from "./post.service";
+import { Like } from "typeorm";
 
 @Controller("post")
 export class PostController {
@@ -27,13 +28,22 @@ export class PostController {
     @Query() query: GetPostQueryDto
   ): Promise<IPaginated<PostOutputDto>> {
     const { page, limit } = query;
+
+    const where = [
+      query.title && {
+        title: Like(`%${query.title}%`),
+      },
+      query.userName && { userName: Like(`%${query.userName}%`) },
+    ];
     const [posts, total] = await Promise.all([
       this.postService.getPosts({
+        where,
         skip: (page - 1) * limit,
         take: limit,
       }),
-      this.postService.getTotalPostsCount(),
+      this.postService.getTotalPostsCount(where),
     ]);
+
     return PaginatedOutput(PostOutputDto, posts, total, page, limit);
   }
 

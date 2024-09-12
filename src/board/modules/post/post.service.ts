@@ -30,7 +30,7 @@ export class PostService {
   }
 
   getTotalPostsCount(
-    where: FindOptionsWhere<PostEntity> = {}
+    where: FindOptionsWhere<PostEntity> | FindOptionsWhere<PostEntity>[] = {}
   ): Promise<number> {
     const repo = this.dataSource.getRepository(PostEntity);
     return repo.countBy(where);
