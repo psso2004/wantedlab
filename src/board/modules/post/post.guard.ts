@@ -8,7 +8,7 @@ import {
 import { PostService } from "./post.service";
 
 @Injectable()
-export class PasswordGuard implements CanActivate {
+export class PostGuard implements CanActivate {
   constructor(private readonly postService: PostService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

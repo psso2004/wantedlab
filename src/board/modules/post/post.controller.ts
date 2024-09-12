@@ -12,7 +12,7 @@ import { PostOutputDto } from "./dtos/outputs/post.output.dto";
 import { CreatePostInputDto } from "./dtos/inputs/create-post.input.dto";
 import { UpdatePostInputDto } from "./dtos/inputs/update-post.input.dto";
 import { DeletePostInputDto } from "./dtos/inputs/delete-post.input.dto";
-import { PasswordGuard } from "./password.guard";
+import { PostGuard } from "./post.guard";
 import { PaginatedOutput } from "../../dtos/outputs/paginated.output.dto";
 import { IPaginated } from "../../dtos/interfaces/paginated.interface";
 import { GetPostQueryDto } from "./dtos/queries/get-post.query.dto";
@@ -53,14 +53,14 @@ export class PostController {
     return PostOutputDto.fromEntity(post);
   }
 
-  @UseGuards(PasswordGuard)
+  @UseGuards(PostGuard)
   @Patch()
   async updatePost(@Body() input: UpdatePostInputDto): Promise<PostOutputDto> {
     const post = await this.postService.updatePost(input);
     return PostOutputDto.fromEntity(post);
   }
 
-  @UseGuards(PasswordGuard)
+  @UseGuards(PostGuard)
   @Delete()
   async deletePost(@Body() input: DeletePostInputDto): Promise<void> {
     const { id } = input;
