@@ -27,7 +27,7 @@ export class PasswordGuard implements CanActivate {
 
     const post = await this.postRepository.findOneBy({ id });
     if (!post) {
-      throw new BadRequestException("not found post");
+      throw new BadRequestException("post not found");
     }
 
     // todo: password hash

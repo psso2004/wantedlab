@@ -18,10 +18,14 @@ import { PostEntity } from "./entities/post.entity";
 import { PaginatedOutput } from "../../dtos/outputs/paginated.output.dto";
 import { IPaginated } from "../../dtos/interfaces/paginated.interface";
 import { GetPostQueryDto } from "./dtos/queries/get-post.query.dto";
+import { PostService } from "./post.service";
 
 @Controller("post")
 export class PostController {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly postService: PostService
+  ) {}
 
   @Get()
   async getPosts(
@@ -35,18 +39,21 @@ export class PostController {
 
   @Post()
   async createPost(@Body() input: CreatePostInputDto): Promise<PostOutputDto> {
-    return null;
+    const post = await this.postService.createPost(input);
+    return PostOutputDto.fromEntity(post);
   }
 
   @UseGuards(PasswordGuard)
   @Patch()
   async updatePost(@Body() input: UpdatePostInputDto): Promise<PostOutputDto> {
-    return null;
+    const post = await this.postService.updatePost(input);
+    return PostOutputDto.fromEntity(post);
   }
 
   @UseGuards(PasswordGuard)
   @Delete()
   async deletePost(@Body() input: DeletePostInputDto): Promise<void> {
-    return null;
+    const { id } = input;
+    return this.postService.deletePost(id);
   }
 }

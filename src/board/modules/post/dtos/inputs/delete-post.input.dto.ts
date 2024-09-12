@@ -5,8 +5,8 @@ import * as Joi from "joi";
   allowUnknown: false,
 })
 export class DeletePostInputDto {
-  @JoiSchema(Joi.number().required())
-  id: string;
+  @JoiSchema(Joi.number().integer().positive().required())
+  id: number;
 
   @JoiSchema(Joi.string().required())
   password: string;
