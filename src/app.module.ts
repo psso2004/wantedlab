@@ -48,6 +48,15 @@ import { BullModule } from "@nestjs/bullmq";
           host: configService.get<string>("REDIS_HOST"),
           port: configService.get<number>("REDIS_PORT"),
         },
+        defaultJobOptions: {
+          removeOnComplete: true,
+          removeOnFail: true,
+          attempts: 5,
+          backoff: {
+            type: "fixed",
+            delay: 5000,
+          },
+        },
       }),
     }),
     BoardModule,
