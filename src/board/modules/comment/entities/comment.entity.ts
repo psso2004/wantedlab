@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -16,10 +15,6 @@ import { PostCommentEntity } from "../../post/entities/post-comment.entity";
 export class CommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Index()
-  @Column({ nullable: true })
-  rootCommentId: number | null;
 
   @Column({ nullable: true })
   parentCommentId: number | null;

@@ -6,6 +6,7 @@ import {
   EntityManager,
   FindManyOptions,
   FindOptionsWhere,
+  In,
 } from "typeorm";
 import { PostService } from "../post/post.service";
 
@@ -25,15 +26,42 @@ export class CommentService {
   }
 
   getComments(
-    options: FindManyOptions<CommentEntity> = {}
+    options: FindManyOptions<CommentEntity> = {},
+    entityManager?: EntityManager
   ): Promise<CommentEntity[]> {
-    return null;
+    const em = entityManager ?? this.dataSource.createEntityManager();
+    return em.find(CommentEntity, options);
   }
 
   getTotalCommentsCount(
     where: FindOptionsWhere<CommentEntity> = {}
   ): Promise<number> {
-    return null;
+    const repo = this.dataSource.getRepository(CommentEntity);
+    return repo.countBy(where);
+  }
+
+  async loadChildren(comment: CommentEntity, visited: Set<number> = new Set()) {
+    if (!comment.children || comment.children.length === 0) return;
+
+    if (visited.has(comment.id)) return;
+    visited.add(comment.id);
+
+    const repo = this.dataSource.getRepository(CommentEntity);
+    const children = await repo.find({
+      where: {
+        parentCommentId: In(comment.children.map((child) => child.id)),
+      },
+    });
+
+    await Promise.all(
+      comment.children.map(async (child) => {
+        child.children = children.filter(
+          ({ parentCommentId }) => parentCommentId === child.id
+        );
+
+        await this.loadChildren(child, visited);
+      })
+    );
   }
 
   async createComment(
@@ -51,18 +79,7 @@ export class CommentService {
       throw new NotFoundException("post not found");
     }
 
-    const parentComment =
-      createData.parentCommentId !== null
-        ? await this.getComment({ id: createData.parentCommentId }, em)
-        : null;
-    const rootCommentId =
-      parentComment !== null ? parentComment.rootCommentId : null;
-    const comment = em.create(
-      CommentEntity,
-      Object.assign(createData, {
-        rootCommentId,
-      })
-    );
+    const comment = em.create(CommentEntity, Object.assign(createData, {}));
 
     return em.save(CommentEntity, comment);
   }
