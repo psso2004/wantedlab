@@ -6,11 +6,24 @@ export class CommentOutputDto {
   children: CommentOutputDto[];
   createdAt: Date;
 
-  constructor(source: CommentEntity) {
-    this.content = source.content;
-    this.userName = source.userName;
-    this.children =
-      source.children?.map((child) => new CommentOutputDto(child)) || [];
-    this.createdAt = source.createdAt;
+  constructor(
+    content: string,
+    userName: string,
+    children: CommentEntity[],
+    createdAt: Date
+  ) {
+    this.content = content;
+    this.userName = userName;
+    this.children = children.map((child) => CommentOutputDto.fromEntity(child));
+    this.createdAt = createdAt;
+  }
+
+  static fromEntity(source: CommentEntity) {
+    return new CommentOutputDto(
+      source.content,
+      source.userName,
+      source.children,
+      source.createdAt
+    );
   }
 }

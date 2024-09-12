@@ -1,31 +1,33 @@
+import { IOutputDto } from "../interfaces/output.interface";
+import { IPaginated, IPaginatedMeta } from "../interfaces/paginated.interface";
+
 export function PaginatedOutput<T, TOutput>(
-  OutputClass: new (source: T) => TOutput,
+  OutputClass: IOutputDto<T, TOutput>,
   items: T[],
   total: number,
   currentPage: number,
   perPage: number
-) {
+): IPaginated<TOutput> {
   class PaginatedOutputDto {
-    constructor(
-      readonly items: T[],
-      readonly total: number,
-      readonly currentPage: number,
-      readonly perPage: number
-    ) {}
+    constructor(readonly data: TOutput[], readonly meta: IPaginatedMeta) {}
 
-    get date(): TOutput[] {
-      return this.items.map((item) => new OutputClass(item));
-    }
-
-    get meta() {
-      return {
-        totalCount: this.total,
-        currentPage: this.currentPage,
-        perPage: this.perPage,
-        lastPage: Math.max(Math.ceil(this.total / this.perPage), 1),
-      };
+    static create(
+      items: T[],
+      total: number,
+      currentPage: number,
+      perPage: number
+    ): PaginatedOutputDto {
+      return new PaginatedOutputDto(
+        items.map((item) => OutputClass.fromEntity(item)),
+        {
+          totalCount: total,
+          currentPage: currentPage,
+          perPage: perPage,
+          lastPage: Math.max(Math.ceil(total / perPage), 1),
+        }
+      );
     }
   }
 
-  return new PaginatedOutputDto(items, total, currentPage, perPage);
+  return PaginatedOutputDto.create(items, total, currentPage, perPage);
 }
