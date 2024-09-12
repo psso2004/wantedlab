@@ -11,8 +11,8 @@ export class KeywordConsumer extends WorkerHost {
   }
 
   async process(job: Job): Promise<void> {
-    const keyword = await this.keywordService.getKeyword({});
-    console.log(keyword);
+    const count = await this.keywordService.getKeywordMatchCount(job.data);
+    console.log(count);
   }
 
   @OnWorkerEvent("failed")
