@@ -3,11 +3,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { PostEntity } from "./entities/post.entity";
 import { PostCommentEntity } from "./entities/post-comment.entity";
 import { PostController } from "./post.controller";
-import { PasswordGuard } from "./password.guard";
+import { PostService } from './post.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PostEntity, PostCommentEntity])],
-  providers: [PasswordGuard],
   controllers: [PostController],
+  providers: [PostService],
 })
 export class PostModule {}
