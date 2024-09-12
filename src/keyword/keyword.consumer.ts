@@ -1,21 +1,26 @@
 import { Injectable } from "@nestjs/common";
 import { OnWorkerEvent, Processor, WorkerHost } from "@nestjs/bullmq";
 import { Job } from "bullmq";
+import { KeywordService } from "./keyword.service";
 
 @Injectable()
 @Processor("keyword")
 export class KeywordConsumer extends WorkerHost {
-  async process(job: Job): Promise<void> {
-    console.log(job.data);
+  constructor(private readonly keywordService: KeywordService) {
+    super();
   }
 
-  @OnWorkerEvent("completed")
-  onCompleted() {
-    console.log("성공했어요!!");
+  async process(job: Job): Promise<void> {
+    const keyword = await this.keywordService.getKeyword({});
+    console.log(keyword);
   }
 
   @OnWorkerEvent("failed")
-  onFailed() {
-    console.log("실패했어요!!!");
+  async onFailed(job: Job) {
+    console.log(
+      `${JSON.stringify(job.data)} 키워드 알림 전송 실패(재시도 중 ${
+        job.attemptsMade
+      })`
+    );
   }
 }
