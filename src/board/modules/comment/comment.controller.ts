@@ -16,19 +16,24 @@ export class CommentController {
     @Query() query: GetCommentQueryDto
   ): Promise<IPaginated<CommentOutputDto>> {
     const { page, limit } = query;
+
+    const where = {
+      parentCommentId: IsNull(),
+      postComments: {
+        post: {
+          id: query.boardId,
+        },
+      },
+    };
     const [comments, total] = await Promise.all([
       this.commentService.getComments({
-        where: {
-          parentCommentId: IsNull(),
-        },
+        where,
         relations: ["children"],
         relationLoadStrategy: "query",
         skip: (page - 1) * limit,
         take: limit,
       }),
-      this.commentService.getTotalCommentsCount({
-        parentCommentId: IsNull(),
-      }),
+      this.commentService.getTotalCommentsCount(where),
     ]);
 
     await Promise.all(
@@ -36,6 +41,7 @@ export class CommentController {
         await this.commentService.loadChildren(comment);
       })
     );
+
     return PaginatedOutput(CommentOutputDto, comments, total, page, limit);
   }
 
