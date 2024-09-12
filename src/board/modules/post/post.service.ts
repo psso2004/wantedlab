@@ -1,18 +1,50 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { DataSource, DeepPartial, EntityManager } from "typeorm";
+import {
+  DataSource,
+  DeepPartial,
+  EntityManager,
+  FindManyOptions,
+  FindOptionsWhere,
+} from "typeorm";
 import { PostEntity } from "./entities/post.entity";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class PostService {
   constructor(private readonly dataSource: DataSource) {}
 
-  createPost(
+  getPost(where: FindOptionsWhere<PostEntity>): Promise<PostEntity | null> {
+    const repo = this.dataSource.getRepository(PostEntity);
+    return repo.findOneBy(where);
+  }
+
+  getPosts(options: FindManyOptions<PostEntity> = {}): Promise<PostEntity[]> {
+    const repo = this.dataSource.getRepository(PostEntity);
+    return repo.find(options);
+  }
+
+  getTotalPostsCount(
+    where: FindOptionsWhere<PostEntity> = {}
+  ): Promise<number> {
+    const repo = this.dataSource.getRepository(PostEntity);
+    return repo.countBy(where);
+  }
+
+  async createPost(
     createData: DeepPartial<PostEntity>,
     entityManager?: EntityManager
   ): Promise<PostEntity> {
     const em = entityManager ?? this.dataSource.createEntityManager();
-    // todo: password hash
-    return em.save(PostEntity, createData);
+
+    const hashedPassword = await this.hashPassword(createData.password);
+    const post = em.create(
+      PostEntity,
+      Object.assign(createData, {
+        password: hashedPassword,
+      })
+    );
+
+    return em.save(PostEntity, post);
   }
 
   async updatePost(
@@ -34,5 +66,18 @@ export class PostService {
   async deletePost(id: number, entityManager?: EntityManager): Promise<void> {
     const em = entityManager ?? this.dataSource.createEntityManager();
     await em.softDelete(PostEntity, id);
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return hashedPassword;
+  }
+
+  async comparePassword(
+    password: string,
+    hashedPassword: string
+  ): Promise<boolean> {
+    const isMatch = await bcrypt.compare(password, hashedPassword);
+    return isMatch;
   }
 }

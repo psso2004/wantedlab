@@ -13,8 +13,6 @@ import { CreatePostInputDto } from "./dtos/inputs/create-post.input.dto";
 import { UpdatePostInputDto } from "./dtos/inputs/update-post.input.dto";
 import { DeletePostInputDto } from "./dtos/inputs/delete-post.input.dto";
 import { PasswordGuard } from "./password.guard";
-import { DataSource } from "typeorm";
-import { PostEntity } from "./entities/post.entity";
 import { PaginatedOutput } from "../../dtos/outputs/paginated.output.dto";
 import { IPaginated } from "../../dtos/interfaces/paginated.interface";
 import { GetPostQueryDto } from "./dtos/queries/get-post.query.dto";
@@ -22,18 +20,17 @@ import { PostService } from "./post.service";
 
 @Controller("post")
 export class PostController {
-  constructor(
-    private readonly dataSource: DataSource,
-    private readonly postService: PostService
-  ) {}
+  constructor(private readonly postService: PostService) {}
 
   @Get()
   async getPosts(
     @Query() query: GetPostQueryDto
   ): Promise<IPaginated<PostOutputDto>> {
     const { page, limit } = query;
-    const repo = this.dataSource.getRepository(PostEntity);
-    const [posts, total] = await Promise.all([repo.find(), repo.count()]);
+    const [posts, total] = await Promise.all([
+      this.postService.getPosts(),
+      this.postService.getTotalPostsCount(),
+    ]);
     return PaginatedOutput(PostOutputDto, posts, total, page, limit);
   }
 
