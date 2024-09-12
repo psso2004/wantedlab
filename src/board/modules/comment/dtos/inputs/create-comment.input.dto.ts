@@ -12,9 +12,6 @@ export class CreateCommentInputDto {
   boardType: "post";
 
   @JoiSchema(Joi.number().integer().positive().allow(null).default(null))
-  rootCommentId: number | null;
-
-  @JoiSchema(Joi.number().integer().positive().allow(null).default(null))
   parentCommentId: number | null;
 
   @JoiSchema(Joi.string().required())
