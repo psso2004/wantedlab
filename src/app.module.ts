@@ -9,6 +9,7 @@ import { JoiPipeModule } from "nestjs-joi";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { DataSource } from "typeorm";
 import { BullModule } from "@nestjs/bullmq";
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { BullModule } from "@nestjs/bullmq";
     }),
     BoardModule,
     KeywordModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
