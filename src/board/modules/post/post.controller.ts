@@ -28,7 +28,10 @@ export class PostController {
   ): Promise<IPaginated<PostOutputDto>> {
     const { page, limit } = query;
     const [posts, total] = await Promise.all([
-      this.postService.getPosts(),
+      this.postService.getPosts({
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
       this.postService.getTotalPostsCount(),
     ]);
     return PaginatedOutput(PostOutputDto, posts, total, page, limit);
