@@ -23,6 +23,8 @@ export class CommentController {
         },
         relations: ["children"],
         relationLoadStrategy: "query",
+        skip: (page - 1) * limit,
+        take: limit,
       }),
       this.commentService.getTotalCommentsCount({
         parentCommentId: IsNull(),
