@@ -3,6 +3,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { PostService } from "./post.service";
@@ -22,7 +23,7 @@ export class PostGuard implements CanActivate {
 
     const post = await this.postService.getPost({ id });
     if (!post) {
-      throw new BadRequestException("post not found");
+      throw new NotFoundException("post not found");
     }
 
     const isMatch = await this.postService.comparePassword(
