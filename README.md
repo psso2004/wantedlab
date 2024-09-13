@@ -1,28 +1,80 @@
 ## 실행 방법
-
+***
 1. docker-compose 실행
 ```bash
 docker-compose up -d
 ```
-
 2. DB 스키마 생성 스크립트 실행
 ```bash
 npm run migration:run
 ```
-
 3. DB 시드 데이터 추가
 ```bash
 npm run migration:seed
 ```
+***
 
-DB 접속 정보
+### DB 접속 정보
+***
 - 호스트: `localhost`
 - 포트: `3306`
 - 사용자 이름: `pung`
 - 비밀번호: `pungPassword!23`
 - 데이터베이스: `wantedlab`
+***
+
+### 데이터베이스 테이블
+***
+### `board_posts`
+`board_posts` 테이블은 게시판의 게시물을 나타냅니다.
+- **id**: `int` (기본 키) - 게시물의 고유번호.
+- **title**: `varchar` - 제목.
+- **content**: `text` - 내용.
+- **user_name**: `varchar` - 작성한 사용자의 이름.
+- **password**: `varchar` - 비밀번호.
+- **created_at**: `datetime` - 게시물이 생성된 시각.
+- **updated_at**: `datetime` - 게시물이 마지막으로 업데이트된 시각.
+- **deleted_at**: `datetime` - 게시물이 삭제된 시각 (소프트 삭제).
+#### 관계
+- **board_post_comments**: `PostCommentEntity`와의 일대다 관계.
+<hr style="border: none; border-top: 1px dotted #000;">
+
+### `board_post_comments`
+`board_post_comments` 테이블은 게시물과 댓글 간의 관계를 나타냅니다.
+- **id**: `int` (기본 키) - 고유번호.
+- **post_id**: `int` - 게시물의 고유번호.
+- **comment_id**: `int` - 댓글의 고유번호.
+- **created_at**: `datetime` - 생성된 시각.
+#### 관계
+- **board_posts**: `PostEntity`와의 다대일 관계.
+- **board_comments**: `CommentEntity`와의 다대일 관계.
+<hr style="border: none; border-top: 1px dotted #000;">
+
+### `board_comments`
+`board_comments` 테이블은 댓글에 대한 정보를 저장합니다.
+- **id**: `int` (기본 키) - 댓글의 고유번호.
+- **parent_comment_id**: `int | null` - 부모 댓글의 고유번호 (대댓글 기능을 지원하기 위해 사용됨).
+- **content**: `text` - 댓글의 내용.
+- **user_name**: `varchar` - 작성한 사용자의 이름.
+- **password**: `varchar | null` - 비밀번호 (현재는 불필요할 수 있으나, 추후 댓글 수정 및 삭제 기능을 고려해 추가됨).
+- **created_at**: `datetime` - 댓글이 생성된 시각.
+- **updated_at**: `datetime` - 댓글이 마지막으로 업데이트된 시각.
+- **deleted_at**: `datetime` - 댓글이 삭제된 시각 (소프트 삭제).
+#### 관계
+- **board_post_comments**: `PostCommentEntity`와의 일대다 관계.
+<hr style="border: none; border-top: 1px dotted #000;">
+
+### `keywords`
+`keywords` 테이블은 사용자가 알림 받기 원하는 키워드를 저장합니다.
+- **id**: `int` (기본 키) - 키워드의 고유번호.
+- **user_name**: `varchar` - 키워드를 설정한 사용자의 이름.
+- **keyword**: `varchar` - 키워드.
+- **created_at**: `datetime` - 키워드가 생성된 시각.
+- **deleted_at**: `datetime` - 키워드가 삭제된 시각 (소프트 삭제).
+***
 
 ## 프로젝트 디렉토리 구조
+***
 ```
 src/
 │
@@ -56,9 +108,10 @@ src/
     ├── notification.module.ts          
     └── notification.service.ts         # 알림 서비스(알림 전송)
 ```
-
+***
 
 ## API 목록
+***
 ### 게시글 목록 API
 **설명**: 전체 게시글 목록을 가져옵니다.
 
@@ -96,6 +149,7 @@ curl --location 'localhost:3000/post?page=2&limit=5'
   }
 }
 ```
+<hr style="border: none; border-top: 1px dotted #000;">
 
 ### 게시글 작성 API
 **설명**: 새로운 게시글을 생성합니다.
@@ -129,6 +183,7 @@ curl --location 'localhost:3000/post' \
   "updatedAt": "2024-09-13T03:38:13.002Z"
 }
 ```
+<hr style="border: none; border-top: 1px dotted #000;">
 
 ### 게시글 수정 API
 **설명**: 게시글을 수정합니다.
@@ -180,6 +235,7 @@ curl --location --request PATCH 'localhost:3000/post' \
     "error": "Unauthorized"
 }
 ```
+<hr style="border: none; border-top: 1px dotted #000;">
 
 ### 게시글 삭제 API
 **설명**: 게시글을 삭제합니다.
@@ -219,6 +275,7 @@ curl --location --request DELETE 'localhost:3000/post' \
     "error": "Unauthorized"
 }
 ```
+<hr style="border: none; border-top: 1px dotted #000;">
 
 ### 댓글 목록 API
 **설명**: 특정 게시글 댓글 목록을 가져옵니다.
@@ -263,7 +320,7 @@ curl --location 'localhost:3000/comment?boardPostId=1'
   }
 }
 ```
-
+<hr style="border: none; border-top: 1px dotted #000;">
 
 ### 댓글 작성 API
 **설명**: 특정 게시글에 댓글을 생성합니다.
@@ -304,4 +361,5 @@ curl --location 'localhost:3000/comment' \
     "error": "Not Found"
 }
 ```
+***
 
