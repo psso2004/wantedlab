@@ -7,7 +7,7 @@ import {
   FindOptionsWhere,
 } from "typeorm";
 import { PostEntity } from "./entities/post.entity";
-import * as bcrypt from "bcrypt";
+import * as bcryptjs from "bcryptjs";
 
 @Injectable()
 export class PostService {
@@ -79,7 +79,7 @@ export class PostService {
   }
 
   async hashPassword(password: string): Promise<string> {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
     return hashedPassword;
   }
 
@@ -87,7 +87,7 @@ export class PostService {
     password: string,
     hashedPassword: string
   ): Promise<boolean> {
-    const isMatch = await bcrypt.compare(password, hashedPassword);
+    const isMatch = await bcryptjs.compare(password, hashedPassword);
     return isMatch;
   }
 }
