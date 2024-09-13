@@ -1,6 +1,8 @@
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
+const migrationsDir = process.env.MIGRATIONS_DIR || "./migrations/*{.ts,.js}";
+
 export default new DataSource({
   type: "mysql",
   host: "localhost",
@@ -10,7 +12,7 @@ export default new DataSource({
   database: "wantedlab",
   entities: [__dirname + "/**/*.entity{.ts,.js}"],
   synchronize: false,
-  migrations: ["./migrations/*{.ts,.js}"],
+  migrations: [migrationsDir],
   migrationsTableName: "migrations",
   namingStrategy: new SnakeNamingStrategy(),
 });
