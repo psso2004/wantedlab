@@ -129,6 +129,24 @@ curl --location --request PATCH 'localhost:3000/post' \
   "updatedAt": "2024-09-13T03:38:13.002Z"
 }
 ```
+- 상태 코드: 404 Not Found
+- 상태 코드 설명: 게시글 ID에 해당하는 게시글이 조회되지 않을 때 발생합니다.
+```json
+{
+    "statusCode": 404,
+    "message": "post not found",
+    "error": "Not Found"
+}
+```
+- 상태 코드: 401 Unauthorized
+- 상태 코드 설명: 게시글에 비밀번호가 틀렸을 경우 발생합니다.
+```json
+{
+    "statusCode": 401,
+    "message": "invalid password",
+    "error": "Unauthorized"
+}
+```
 
 ### 게시글 삭제 API
 **설명**: 게시글을 삭제합니다.
@@ -148,6 +166,26 @@ curl --location --request DELETE 'localhost:3000/post' \
 ```
 **응답 예제**:
 - 상태 코드: 200 OK
+```json
+```
+- 상태 코드: 404 Not Found
+- 상태 코드 설명: 게시글 ID에 해당하는 게시글이 조회되지 않을 때 발생합니다.
+```json
+{
+    "statusCode": 404,
+    "message": "post not found",
+    "error": "Not Found"
+}
+```
+- 상태 코드: 401 Unauthorized
+- 상태 코드 설명: 게시글에 비밀번호가 틀렸을 경우 발생합니다.
+```json
+{
+    "statusCode": 401,
+    "message": "invalid password",
+    "error": "Unauthorized"
+}
+```
 
 ### 댓글 목록 API
 **설명**: 특정 게시글 댓글 목록을 가져옵니다.
@@ -222,6 +260,15 @@ curl --location 'localhost:3000/comment' \
   "userName": "임꺽정",
   "children": [],
   "createdAt": "2024-09-13T16:07:48.238Z"
+}
+```
+- 상태 코드: 404 Not Found
+- 상태 코드 설명: 게시글 ID(boardPostId)에 해당하는 게시글이 조회되지 않을 때 발생합니다.
+```json
+{
+    "statusCode": 404,
+    "message": "post not found",
+    "error": "Not Found"
 }
 ```
 
