@@ -22,10 +22,43 @@ DB 접속 정보
 - 비밀번호: `pungPassword!23`
 - 데이터베이스: `wantedlab`
 
+## 프로젝트 디렉토리 구조
+```
+src/
+│
+├── board/                              # 게시판 모듈
+│   ├── dtos/                           # DTO 모음 디렉토리
+│   │   ├── interfaces/                 # 인터페이스 모음
+│   │   ├── outputs/                    # 하위 모듈에서 공통적으로 사용하는 응답 객체 
+│   │   │
+│   └── modules/
+│       ├── post/                       # 게시글 모듈
+│       │   ├── dtos/                   
+│       │   │   ├── inputs/             # 입력 DTO (Request Body)
+│       │   │   ├── outputs/            # 출력 DTO (Response)
+│       │   │   └── queries/            # 쿼리 파라미터 DTO
+│       │   ├── entities/               # 엔티티 관련 파일들
+│       │   ├── post.controller.ts      
+│       │   ├── post.service.ts        
+│       │   └── post.guard.ts           # 게시글 가드(비밀번호 검증)
+│       │
+│       └── comment/                    # 댓글 모듈
+│           ├── dtos/                   
+│           ├── entities/              
+│           └── comment.controller.ts   
+│
+├── keyword/                            # 키워드 모듈
+│   ├── dtos/                           
+│   ├── entities/                       
+│   └── keyword.consumer.ts             # 키워드 관련 consumer (알림 처리 등)
+│
+└── notification/                       # 알림 모듈
+    ├── notification.module.ts          
+    └── notification.service.ts         # 알림 서비스(알림 전송)
+```
+
 
 ## API 목록
-
-
 ### 게시글 목록 API
 **설명**: 전체 게시글 목록을 가져옵니다.
 
