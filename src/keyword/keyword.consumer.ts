@@ -4,6 +4,10 @@ import { Job } from "bullmq";
 import { KeywordService } from "./keyword.service";
 import { NotificationService } from "../notification/notification.service";
 
+/**
+ * KeywordConsumer는 BullMQ 큐에서 'keyword' 큐의 작업을 처리하는 consumer입니다.
+ * 키워드와 관련된 작업을 처리하고 알림을 전송합니다.
+ */
 @Injectable()
 @Processor("keyword")
 export class KeywordConsumer extends WorkerHost {

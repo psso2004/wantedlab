@@ -9,7 +9,7 @@ import { JoiPipeModule } from "nestjs-joi";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { DataSource } from "typeorm";
 import { BullModule } from "@nestjs/bullmq";
-import { NotificationModule } from './notification/notification.module';
+import { NotificationModule } from "./notification/notification.module";
 
 @Module({
   imports: [
@@ -52,8 +52,9 @@ import { NotificationModule } from './notification/notification.module';
         defaultJobOptions: {
           removeOnComplete: true,
           removeOnFail: true,
-          attempts: 5,
+          attempts: 5, // 재시도 횟수
           backoff: {
+            // 각 재시도마다 5초 고정된 값으로 재시도합니다.
             type: "fixed",
             delay: 5000,
           },
