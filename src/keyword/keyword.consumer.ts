@@ -3,6 +3,7 @@ import { OnWorkerEvent, Processor, WorkerHost } from "@nestjs/bullmq";
 import { Job } from "bullmq";
 import { KeywordService } from "./keyword.service";
 import { NotificationService } from "../notification/notification.service";
+import { In } from "typeorm";
 
 /**
  * KeywordConsumer는 BullMQ 큐에서 'keyword' 큐의 작업을 처리하는 consumer입니다.
@@ -19,9 +20,18 @@ export class KeywordConsumer extends WorkerHost {
   }
 
   async process(job: Job): Promise<void> {
-    const count = await this.keywordService.getKeywordMatchCount(job.data);
-    if (count > 0) {
-      await this.notificationService.sendNotification();
+    const matchKeywords = await this.keywordService.getMatchKeywords(
+      job.data.content
+    );
+
+    if (matchKeywords.length > 0) {
+      const keywordEntities = await this.keywordService.getKeywords({
+        where: {
+          keyword: In(matchKeywords),
+        },
+      });
+      const userNames = keywordEntities.map(({ userName }) => userName);
+      await this.notificationService.sendNotification(userNames);
     }
   }
 

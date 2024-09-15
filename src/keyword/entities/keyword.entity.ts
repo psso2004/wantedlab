@@ -16,6 +16,7 @@ export class KeywordEntity {
   @Column()
   userName: string;
 
+  @Index()
   @Column()
   keyword: string;
 

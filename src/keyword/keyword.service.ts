@@ -16,26 +16,19 @@ export class KeywordService {
     return em.find(KeywordEntity, options);
   }
 
-  async getKeywordMatchCount(args: {
-    userName: string;
-    content: string;
-  }): Promise<number> {
-    const { userName, content } = args;
-    const keywords = await this.getKeywords({
-      where: {
-        userName,
-      },
-    });
+  getUniqueKeywords(): Promise<{ keyword: string }[]> {
+    const repo = this.dataSource.getRepository(KeywordEntity);
+    return repo
+      .createQueryBuilder("keyword")
+      .select("keyword.keyword", "keyword")
+      .groupBy("keyword.keyword")
+      .getRawMany<{ keyword: string }>();
+  }
 
-    // 게시글, 댓글내용에서 각 키워드가 포함된 총 개수를 계산합니다.
-    // 해당 키워드가 포함된 경우, count를 증가시킵니다.
-    const count = keywords.reduce((num, { keyword }) => {
-      if (content.includes(keyword)) {
-        num++;
-      }
-      return num;
-    }, 0);
-
-    return count;
+  async getMatchKeywords(content: string): Promise<string[]> {
+    const keywords = await this.getUniqueKeywords();
+    return keywords
+      .filter(({ keyword }) => content.includes(keyword))
+      .map(({ keyword }) => keyword);
   }
 }
